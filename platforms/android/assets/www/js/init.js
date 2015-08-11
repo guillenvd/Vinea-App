@@ -12,16 +12,19 @@ $( document ).ready(function(){
    }    
 
    function sincronizar(){
-      	$( "#body" ).load( "views/json.html" );
-   		$('.button-collapse').sideNav('hide');
-      }    
+         $( "#body" ).load( "views/json.html" );
+         $('.button-collapse').sideNav('hide');
+      }  
+   function hostView(){
+         $( "#body" ).load( "views/host.html" );
+         $('.button-collapse').sideNav('hide');
+   }    
 
    function inicio(){
-      	$( "#body" ).load( "views/inicio.html" );
-   		$('.button-collapse').sideNav('hide');
+         $( "#body" ).load( "views/inicio.html" );
+         $('.button-collapse').sideNav('hide');
+      }    
+   function salir(){
+         navigator.app.exitApp()
       }    
 
-   function fenologiaUp(){
-     //fenologiaRegister('st2atus', 'predioId', 'predioNom', 'loteId', 'loteNom', 'subloteId', 'subloteNom', 'varietalId', 'varietalNom', 'fecha', 'fenologiaId', 'fenologiaNom', 'observaciones');
-      rowfenologia(); 
-   }

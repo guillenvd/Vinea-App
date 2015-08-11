@@ -7,18 +7,18 @@ function dbInicializar() {
 
 function dropTable(table) {
   var db = dbInicializar();
-  document.getElementById("data").innerHTML += table + 'borrando <br>';
+  ///document.getElementById("data").innerHTML += table + 'borrando <br>';
   db.transaction(function(tx) {
     tx.executeSql("DROP TABLE IF EXISTS " + table + "");
   });
-  document.getElementById("data").innerHTML += table + 'fue borrada <br>';
+  //document.getElementById("data").innerHTML += table + 'fue borrada <br>';
 }
 
 function rowfenologia() {
   var db = dbInicializar();
   var html="";
   db.transaction(function(t) {
-    t.executeSql("SELECT * FROM fenologia", [], function(transaction, results) {
+    t.executeSql("SELECT * FROM fenologia ORDER BY fecha DESC", [], function(transaction, results) {
       for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i);
         html += '<tr>'
@@ -57,6 +57,9 @@ function rowEfenologia() {
        // document.getElementById("data").innerHTML += row.nombre + '' + row.ide + '<br>';
                 predio.innerHTML+='<option value="'+row.ide+'">'+row.evento+'</option>';  
       }
+      if( results.rows.length == 0 ){
+          Lote.innerHTML='<option value="">No hay Fenologias</option>';
+        }
     });
   });
 }
@@ -67,7 +70,13 @@ function rowPredio(){
   db.transaction(function(t) {
     t.executeSql("SELECT * FROM predio", [], function(transaction, results) {
       var predio = document.getElementById("PredioSelect");
+      var Lote = document.getElementById("LoteSelect");
+      var Sublote = document.getElementById("SubloteSelect");
+      var Varietal = document.getElementById("VarietalSelect");
           predio.innerHTML='<option value="">Seleccione un Predio</option>';
+          Lote.innerHTML='<option value="">Seleccione un Predio primero</option>';
+          Sublote.innerHTML='<option value="">Seleccione un Lote primero</option>';
+          Varietal.innerHTML='<option value="">Seleccione un Sublote primero</option>';
       for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i);
        // document.getElementById("data").innerHTML += row.nombre + '' + row.ide + '<br>';
@@ -84,35 +93,66 @@ function rowLote() {
     t.executeSql("SELECT * FROM lote where predio  = ? ", [predio], function(transaction, results) {
         var Lote = document.getElementById("LoteSelect");
           Lote.innerHTML='<option value="">Seleccione un Lote</option>';
+      var Sublote = document.getElementById("SubloteSelect");
+      var Varietal = document.getElementById("VarietalSelect");
+          Sublote.innerHTML='<option value="">Seleccione un Lote primero</option>';
+          Varietal.innerHTML='<option value="">Seleccione un Sublote primero</option>';
       for (var i = 0; i < results.rows.length; i++) {
-        var row = results.rows.item(i);
-        document.getElementById("data").innerHTML += row.nombre + '' + row.ide + row.predio + '<br>';
+            var row = results.rows.item(i);
                 Lote.innerHTML+='<option value="'+row.ide+'">'+row.nombre+'</option>';
       }
+      if( results.rows.length == 0 ){
+          Lote.innerHTML='<option value="">No hay Lotes</option>';
+        }
+      else if(predio==""){
+          Lote.innerHTML='<option value="">Seleccione primero un Predio</option>';
+      }
+
+
     });
   });
 }
 
 
 function rowSublote() {
+  var Lote = document.getElementById("LoteSelect").value;
   var db = dbInicializar();
   db.transaction(function(t) {
-    t.executeSql("SELECT * FROM sublote", [], function(transaction, results) {
+    t.executeSql("SELECT * FROM sublote where lote  = ? ", [Lote], function(transaction, results) {
+        var Sublote = document.getElementById("SubloteSelect");
+          Sublote.innerHTML='<option value="">Seleccione un Sublote</option>';
+        var Varietal = document.getElementById("VarietalSelect");
+            Varietal.innerHTML='<option value="">Seleccione un Sublote primero</option>';
       for (var i = 0; i < results.rows.length; i++) {
-        var row = results.rows.item(i);
-        document.getElementById("data").innerHTML += row.nombre + '' + row.ide + row.lote + '<br>';
+              var row = results.rows.item(i);
+              Sublote.innerHTML+='<option value="'+row.ide+'">'+row.nombre+'</option>';
+      }
+      if( results.rows.length == 0 ){
+          Lote.innerHTML='<option value="">No hay Sublote</option>';
+        }
+      else if(Lote==""){
+          Lote.innerHTML='<option value="">Seleccione primero un Lote</option>';
       }
     });
   });
 }
 
 function rowVarietal() {
+  var Sublote = document.getElementById("SubloteSelect").value;
   var db = dbInicializar();
   db.transaction(function(t) {
-    t.executeSql("SELECT * FROM varietal", [], function(transaction, results) {
+    t.executeSql("SELECT * FROM varietal where sublote  = ? ", [Sublote], function(transaction, results) {
+        var Varietal = document.getElementById("VarietalSelect");
+          Varietal.innerHTML='<option value="">Seleccione un Varietal</option>';
       for (var i = 0; i < results.rows.length; i++) {
-        var row = results.rows.item(i);
-        document.getElementById("data").innerHTML += row.nombre + '' + row.ide + row.sublote + '<br>';
+              var row = results.rows.item(i);
+              Varietal.innerHTML+='<option value="'+row.ide+'">'+row.nombre+'</option>';
+      }
+      if( results.rows.length == 0 ){
+          Lote.innerHTML='<option value="">No hay Varietales</option>';
+        }
+      else if(Sublote==""){
+          Lote.innerHTML='<option value="">Seleccione primero un Sublote</option>';
       }
     });
   });
@@ -165,4 +205,27 @@ function fenologiaRegister(status, predioId, predioNom, loteId, loteNom, sublote
     tx.executeSql('CREATE TABLE IF NOT EXISTS fenologia (id integer primary key,status text, predioId text, predioNom text, loteId text, loteNom text, subloteId text, subloteNom text, varietalId text, varietalNom text, fecha text, fenologiaId text, fenologiaNom text, observaciones text )');
     tx.executeSql("INSERT INTO fenologia (status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", [status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones], null, null);
   });
+}
+
+   function fenologiaUp(){
+      var predioId      = $( "#PredioSelect" ).val();
+      var loteId        = $( "#LoteSelect" ).val();
+      var subloteId     = $( "#SubloteSelect" ).val();
+      var varietalId    = $( "#VarietalSelect" ).val();
+      var fenologiaId   = $( "#FenologiaSelect" ).val();
+      var predioText      = $( "#PredioSelect  option:selected" ).text();
+      var loteText        = $( "#LoteSelect  option:selected" ).text();
+      var subloteText     = $( "#SubloteSelect  option:selected" ).text();
+      var varietalText    = $( "#VarietalSelect  option:selected" ).text();
+      var fenologiaText   = $( "#FenologiaSelect  option:selected" ).text();
+      var fecha         = $( "#Fecha" ).val();
+      var observaciones = $( "#Observaciones" ).val();
+    if(predioId!=""&&loteId!=""&&subloteId!=""&&varietalId!=""&&fenologiaId!=""&&fecha!=""&&observaciones!=""){
+        fenologiaRegister('1', predioId!="", predioText, loteId, loteText, subloteId, subloteText, varietalId, varietalText, fecha, fenologiaId, fenologiaText, observaciones);
+        fenologiaIndex();
+        Materialize.toast('Fenología registrada.', 4000)
+      }
+    else {
+      alert("Ha dejado campos vacios");
+    }
 }

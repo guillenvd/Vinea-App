@@ -1,14 +1,30 @@
-       <div id="data"> alert       
-        </div> <br>
-      <div id="alert">alert   
-     </div>
-        <input type="text" id="host" name="host" value="">
-        
-        <a class="btn-floating btn-large waves-effect waves-light red" onclick="send()">
+<div class="row z-depth-3">
+    <br><br>     
+       <div class="row">
+          <div class="div col s8 offset-s2">
+            <h5>Vinea.</h5>
+            <p>Sincronización de datos.</p>
+            <div class="divider"></div>
+            <div id="alert">   </div>
+            <div class="progress" id="loadDiv" style="margin">
+                <div id="load" class="indeterminate"></div>
+            </div>
+          </div>
+        </div>
+
+        <a class="btn-floating btn-large waves-effect waves-light  indigo darken-2" onclick="send()" id="SyncBtn">
         	<i class="fa fa-refresh"></i>
         </a>
-		<a class="btn-floating btn-large waves-effect waves-light red" onclick="fenologiaUp()">
-				<i class="fa fa-refresh"></i>
-		</a>
-        <button class="btn waves-effect waves-light" type="submit" name="action" onclick="addHost();">GUARDAR</button>
 
+    <br><br><br>
+    <input type="hidden" name="hostHidden" id="hostHidden" value="">
+</div>
+            
+
+  <script>
+        $(document).ready(function() {
+          outputHost(); 
+          $('#loadDiv').hide();
+          $('#SyncBtn').show();
+        });
+  </script>

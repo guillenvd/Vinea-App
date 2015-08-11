@@ -53,7 +53,7 @@
       </div>
       <div class="row">
         <div class="input-field col s12">
-            <input type="date" class="datepicker">
+            <input type="date" class="datepicker" id="Fecha" value="">
             <label for="textarea1">Fecha</label>
 
         </div>
@@ -61,9 +61,14 @@
 
       <div class="row">
         <div class="input-field col s12">
-          <textarea id="textarea1" class="materialize-textarea"></textarea>
+          <textarea class="materialize-textarea" id="Observaciones" value=""></textarea>
           <label for="textarea1">Observaciones</label>
         </div>
+      </div>
+      <div class="row center-align">
+          <a class="waves-effect waves-light btn" onclick="fenologiaUp();">
+            Guardar
+          </a>
       </div>
 
     </form>
