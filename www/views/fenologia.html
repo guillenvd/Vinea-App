@@ -1,0 +1,33 @@
+ <div class="fixed-action-btn">
+    <a class="btn-floating btn-large indigo darken-2" onclick="altaFenologia();">
+      <i class="fa fa-plus"></i>
+    </a>
+  </div>
+<div class="divider"></div>
+  <div class="section">
+    <h5>Fenología</h5>
+    <p>Registros</p>
+  </div>
+  <div class="divider"></div>
+
+    <table  class=" bordered striped centered responsive-table z-depth-3" id="tableFenologia">
+        <thead>
+          <tr>
+              <th data-field="fecha">Fecha</th>
+              <th data-field="predio">Predio</th>
+              <th data-field="lote">Lote</th>
+              <th data-field="sublote">Sublote</th>
+              <th data-field="ver">Ver</th>
+              <th data-field="editar">Editar</th>
+          </tr>
+        </thead>
+        <tbody id='bodyTable'>
+
+        </tbody>
+    </table>
+
+   <script>
+        $(document).ready(function() {
+			fenologiaUp()
+          });
+  </script>
