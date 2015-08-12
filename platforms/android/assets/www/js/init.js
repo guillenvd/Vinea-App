@@ -6,6 +6,20 @@ $( document ).ready(function(){
          $( "#body" ).load( "views/fenologia.html" );
          $('.button-collapse').sideNav('hide');
       } 
+
+   function fenologiaEdit(id){
+         $( "#viewsFenologiaEdit" ).show();
+         $( "#viewsFenologia" ).hide();
+         $('.button-collapse').sideNav('hide');
+          editFenologia(id);
+    } 
+   function fenologiaShow(id){
+         $( "#viewsFenologiaShow" ).show();
+         $( "#viewsFenologia" ).hide();
+         $('.button-collapse').sideNav('hide');
+         showFenologia(id);
+    } 
+
    function altaFenologia(){
          $( "#body" ).load( "views/altaFenologia.html" );
          $('.button-collapse').sideNav('hide');

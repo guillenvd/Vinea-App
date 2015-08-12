@@ -1,3 +1,64 @@
+function JsonPostFenologia(id,status,p,l,s,v,f,e,o,servidor){
+       var x = {"id":id,"status":status,"predio":p,"lote":l,"sublote":s,"varietal":v,"fecha":f,"evento":e,"observaciones":o};
+       var req = $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    timeout : 10000,
+                    url: "http://"+servidor+"/web/app-php/altapp.php", 
+                    data: x,
+                    success: function(data) {
+                        var db = dbInicializar();
+                       if (data['estado']==1) {
+                            db.transaction(function(t) {
+                                t.executeSql("DELETE FROM fenologia WHERE id=?", [id], null);
+                           });
+                        } 
+                        else{
+                              Materialize.toast('Ha ocurrido un error en alta de Fenologías', 4000);
+                            }
+                           }, 
+                    error: function() {
+                            //do something
+                          }
+    });
+    req.success(function(){    });
+    req.error(function(){   alert('A ocurrido un error al subir Fenologias.');    });
+}
+
+function fenologiaJson(servidor){
+       var x = "0";
+       var req = $.ajax({
+                          type: "POST",
+                          dataType: "json",
+                          timeout : 10000,
+                          url: "http://"+servidor+"/web/app-php/fenologica.php", 
+                          data: x,
+                          success: function(data) {
+                                   var db = dbInicializar();
+                                    db.transaction(function(tx) {
+                                          tx.executeSql("DROP TABLE IF EXISTS fenologia");
+                                          tx.executeSql('CREATE TABLE IF NOT EXISTS fenologia (id integer primary key,status text, predioId text, predioNom text, loteId text, loteNom text, subloteId text, subloteNom text, varietalId text, varietalNom text, fecha text, fenologiaId text, fenologiaNom text, observaciones text, ide text )');
+                                    });
+                                   $.each(data, function(i,item){ 
+                                        db.transaction(function(tx) {
+                                            tx.executeSql("INSERT INTO fenologia (status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones,ide) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",['2', item.predioId, item.predioNom, item.loteId, item.loteNom, item.subloteId, item.subloteNom, item.varietalId, item.varietalNom, item.fecha, item.eventoFono, item.eventoNom, item.observaciones,item.id]);
+                                          });
+                                   });
+                                  Materialize.toast('Fenologia Sincronizado.', 4000);
+                                  $("#load").attr('class', 'determinate');
+                                  $('#load').attr('width', '100%' )
+                                  var host = document.getElementById("alert");
+                                      host.innerHTML ='Sincronizado 100%';
+                                 }, 
+                          error: function() {
+                                  Materialize.toast('Ha ocurrido un error en Fenologías', 4000);
+                                    $('#SyncBtn').show();
+                                    $('#loadDiv').hide();
+                                }
+          });
+}
+
+
 function efenologiaJson(servidor){
        var x = "0";
        var req = $.ajax({
@@ -11,9 +72,9 @@ function efenologiaJson(servidor){
                                    $.each(data, function(i,item){ 
                                        efenologiaRegister(item.evento,item.id);
                                    });
-                                  Materialize.toast('Fenología Sincronizado.', 4000);
+                                  Materialize.toast('Eventos fenología Sincronizado.', 4000);
                                   $("#load").attr('class', 'determinate');
-                                  $('#load').attr('width', '100%' )
+                                  $('#load').attr('width', '100%' ) 
                                   var host = document.getElementById("alert");
                                       host.innerHTML ='Sincronizado 100%';
                                  }, 
@@ -24,6 +85,7 @@ function efenologiaJson(servidor){
                                 }
           });
 }
+
 
 
 
@@ -162,6 +224,19 @@ function addHost(){
             }
 }
 
+function countFenologias(servidor){
+    var db = dbInicializar();
+      db.transaction(function(t) {
+                t.executeSql("SELECT * FROM fenologia", [], function(transaction, results){
+                           var i;
+                           //var numRegister = results.rows.length;
+                            for (i = 0; i < results.rows.length; i++){
+                                var row = results.rows.item(i);
+                                JsonPostFenologia(row.id, row.status, row.predioId, row.loteId, row.subloteId, row.varietalId, row.fecha, row.fenologiaId, row.observaciones,servidor);
+                            }
+                        });
+        });
+}
 function send() {
   $('#SyncBtn').hide();
   $('#loadDiv').show();
@@ -171,7 +246,8 @@ function send() {
   subloteJson(servidor);
   varietalJson(servidor);
   efenologiaJson(servidor);
-
+  countFenologias(servidor);
+  fenologiaJson(servidor);
 
 }
 /*

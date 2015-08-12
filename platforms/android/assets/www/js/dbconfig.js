@@ -13,8 +13,55 @@ function dropTable(table) {
   });
   //document.getElementById("data").innerHTML += table + 'fue borrada <br>';
 }
+function  showFenologia(id){
+  var db = dbInicializar();
+  var html="";
+  db.transaction(function(t) {
+    t.executeSql("SELECT * FROM fenologia where id = ?", [id], function(transaction, results) {
+      for (var i = 0; i < results.rows.length; i++) {
+        var row = results.rows.item(i);
+        html += '<tr>'
+                     +'<td>'+row.predioNom+'</td>'
+                     +'<td>'+row.loteNom+'</td>'
+                     +'<td>'+row.subloteNom+'</td>'
+                     +'<td>'+row.varietalNom+'</td>'
+                     +'<td>'+row.fenologiaNom+'</td>'
+                     +'<td>'+row.fecha+'</td>'
+                     +'<td>'+row.observaciones+'</td>'
+                    +' </tr>';
 
-function rowfenologia() {
+      }
+       var  tb = document.getElementById('bodyTableShow');
+              tb.innerHTML = html;
+    });
+  });
+}
+
+function  showFenologia(id){
+  var db = dbInicializar();
+  var html="";
+  db.transaction(function(t) {
+    t.executeSql("SELECT * FROM fenologia where id = ?", [id], function(transaction, results) {
+      for (var i = 0; i < results.rows.length; i++) {
+        var row = results.rows.item(i);
+        html += '<tr>'
+                     +'<td>'+row.predioNom+'</td>'
+                     +'<td>'+row.loteNom+'</td>'
+                     +'<td>'+row.subloteNom+'</td>'
+                     +'<td>'+row.varietalNom+'</td>'
+                     +'<td>'+row.fenologiaNom+'</td>'
+                     +'<td>'+row.fecha+'</td>'
+                     +'<td>'+row.observaciones+'</td>'
+                    +' </tr>';
+
+      }
+       var  tb = document.getElementById('bodyTableShow');
+              tb.innerHTML = html;
+    });
+  });
+}
+
+function rowfenologia(){
   var db = dbInicializar();
   var html="";
   db.transaction(function(t) {
@@ -28,12 +75,12 @@ function rowfenologia() {
                      +'<td>'+row.subloteNom+'</td>'
                      +'<td>'
                           +'<ul class="collection">'
-                              +'<a href="#!" class="collection-item center-align" onclick="alert('+row.id+');"><i class="fa fa-th-list"></i></a>'
+                              +'<a href="#!" class="collection-item center-align" onclick="fenologiaShow('+row.id+');"><i class="fa fa-th-list"></i></a>'
                           +'</ul>'
                      +' </td>'
                      +' <td>'
                           +'<ul class="collection">'
-                              +'<a href="#!" class="collection-item center-align" onclick="alert('+row.id+');"><i class="fa fa-edit"></i></a>'
+                              +'<a href="#!" class="collection-item center-align" onclick="fenologiaEdit('+row.id+');"><i class="fa fa-edit"></i></a>'
                           +'</ul>'
                      +' </td>'
                   +' </tr>';
@@ -199,11 +246,11 @@ function varietalRegister(nombre, id, sublote) {
   });
 }
 
-function fenologiaRegister(status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones) {
+function fenologiaRegister(id, status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones) {
   var db = dbInicializar();
   db.transaction(function(tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS fenologia (id integer primary key,status text, predioId text, predioNom text, loteId text, loteNom text, subloteId text, subloteNom text, varietalId text, varietalNom text, fecha text, fenologiaId text, fenologiaNom text, observaciones text )');
-    tx.executeSql("INSERT INTO fenologia (status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", [status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones], null, null);
+    tx.executeSql('CREATE TABLE IF NOT EXISTS fenologia (id integer primary key,status text, predioId text, predioNom text, loteId text, loteNom text, subloteId text, subloteNom text, varietalId text, varietalNom text, fecha text, fenologiaId text, fenologiaNom text, observaciones text, ide text )');
+    tx.executeSql("INSERT INTO fenologia (status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones,ide) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [status, predioId, predioNom, loteId, loteNom, subloteId, subloteNom, varietalId, varietalNom, fecha, fenologiaId, fenologiaNom, observaciones,id], null, null);
   });
 }
 
@@ -221,7 +268,7 @@ function fenologiaRegister(status, predioId, predioNom, loteId, loteNom, sublote
       var fecha         = $( "#Fecha" ).val();
       var observaciones = $( "#Observaciones" ).val();
     if(predioId!=""&&loteId!=""&&subloteId!=""&&varietalId!=""&&fenologiaId!=""&&fecha!=""&&observaciones!=""){
-        fenologiaRegister('1', predioId!="", predioText, loteId, loteText, subloteId, subloteText, varietalId, varietalText, fecha, fenologiaId, fenologiaText, observaciones);
+        fenologiaRegister('0', '1', predioId, predioText, loteId, loteText, subloteId, subloteText, varietalId, varietalText, fecha, fenologiaId, fenologiaText, observaciones);
         fenologiaIndex();
         Materialize.toast('Fenología registrada.', 4000)
       }
